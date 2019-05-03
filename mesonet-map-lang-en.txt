@@ -1,0 +1,217 @@
+<?php
+############################################################################
+#
+# This is the English language plugin file for the [network]-mesomap.php (Multilingual version)
+# It needs to be in the same directory as the [network]-mesomap.php program itself.
+# This definition file is equivalent to the Nordic-mesomap definition files except the names have been prefixed
+# with 'RMNET_' on all definitions, and some definitions are not used in the non-Nordic versions.
+# Ken True
+# Version 1.00 - 24-Feb-2009 initial release
+# Version 1.01 - 22-Jul-2009 added character set support
+# Version 1.02 - 01-Oct-2012 added support for $printList to suppress List display 
+# Version 3.00 - 24-Jul-2016 repurposed for mesonet-map.php with editing
+# Version 3.03 - 31-Jul-2016 - added CBI display support 
+# Version 4.03 - 29-May-2018 - removed preg_replace e modifier for timezone processing
+
+define('RMNET_CHARSET','ISO-8859-1');
+define('RMNET_LANGVERSION', 'mesonet-map-lang-en.txt - Version 4.03 - 29-May-2018');
+// Main
+
+define('RMNET_COLSORT', 'Note: Click on the table column title to change the order of that column\'s vaues.');
+// Tables and title= tags
+
+// TABLEHEADER
+define('RMNET_FEAT', 'Stations<br/>Features');
+define('RMNET_STATE', 'Area');
+define('RMNET_STATION','Station');
+define('RMNET_CURHEAD', 'Current<br />Cond.');
+define('RMNET_CONDL','Current Conditions');
+define('RMNET_TEMP', 'Temp.');
+define('RMNET_TEMPL', 'Temperature');
+define('RMNET_DEWPT', 'Dew Point');
+define('RMNET_DEWPTABBREV','DP');
+define('RMNET_HUM', 'Humid');
+define('RMNET_HUML', 'Humidity');
+define('RMNET_AVGWIND', 'Wind');
+define('RMNET_GUSTWIND', 'Gust');
+define('RMNET_GUSTABBREV', 'G');
+define('RMNET_WINDL', 'Wind Direction and Speed/Gust');
+define('RMNET_WIND', 'Wind');
+define('RMNET_WINDFROM', 'Wind from');
+define('RMNET_PRECIPS', 'Rain');
+define('RMNET_PRECIPSL', 'Rain Today');
+define('RMNET_BAROB', 'Pressure');
+define('RMNET_BAROT', 'Trend');
+define('RMNET_BAROL', 'Pressure and Trend');
+define('RMNET_SNOB', 'Snow');
+define('RMNET_TXTGUST', 'Gust');
+define('RMNET_DATAUPDT', 'Last<br />Update');
+define('RMNET_NOCOND', 'No current conditions report');
+define('RMNET_TOWN',"Name of the town");
+define('RMNET_CBI', 'Fire<br/>Danger');
+define('RMNET_CBILEGEND','Fire Danger [Chandler Burning Index]');
+define('RMNET_CBI_EXTREME','Extreme');
+define('RMNET_CBI_VERYHIGH','Very High');
+define('RMNET_CBI_HIGH','High');
+define('RMNET_CBI_MODERATE','Moderate');
+define('RMNET_CBI_LOW','Low');
+
+define('RMNET_OFFLINE',"Offline"); // text to display on mesomap when station data is stale/not available
+// for javascript animation control button lables
+define('RMNET_RUN', 'Run');
+define('RMNET_PAUSE', 'Pause');
+define('RMNET_STEP', 'Step');
+// Standalone (items are used when [network]-mesomap.php is invoked as a script (instead of being included in a page)
+define('RMNET_CONDSFROM', 'Conditions data shown was collected <br/>from');
+// date-time appears
+define('RMNET_CONDSTO', 'to');
+// the following functions are used to translate various things ..
+// replace the '...' after the => in each of the arrays below for local language
+// do not change the '..' before the => .. it is the key used for the lookups
+// Wind direction abbreviations
+function RMNET_lang_winddir($rawd) {
+$txtdir =  array(
+'N' => 'N',
+'NNE' => 'NNE',
+'NE' => 'NE',
+'ENE' => 'ENE',
+'E' => 'E',
+'ESE' => 'ESE',
+'SE' => 'SE',
+'SSE' => 'SSE',
+'S' => 'S',
+'SSW' => 'SSW',
+'SW' => 'SW',
+'WSW' => 'WSW',
+'W' => 'W',
+'WNW' => 'WNW',
+'NW' => 'NW',
+'NNW' => 'NNW',
+);
+if(isset($txtdir[$rawd])) {
+  $txtdire = $txtdir[$rawd];
+ } else {
+  $txtdire = $rawd;
+}
+return $txtdire;
+}
+// Barometer trend abbreviations
+function RMNET_lang_barotrend($rawe) {
+$txtbarot =  array(  
+'Rising' => 'Rising',
+'Falling' => 'Falling',
+'Rising Rapidly' => 'Rising Rapidly',
+'Falling Rapidly' => 'Falling Rapidly',
+'Rising Slowly' => 'Rising Slowly',
+'Falling Slowly' => 'Falling Slowly',
+'Steady' => 'Steady'
+);
+if(isset($txtbarot[$rawe])) {
+  $txtbart = $txtbarot[$rawe];
+ } else {
+  $txtbart = $rawe;
+ }
+return $txtbart;
+}
+function RMNET_lang_stationfeatures($rawg) {
+$txtfeat =  array(  
+'Weather, Lightning, WebCam' => 'Weather, WebCam, Lightning',
+'Weather, WebCam, Lightning' => 'Weather, WebCam, Lightning',
+'Weather, WebCam' => 'Weather, WebCam',
+'Weather, Lightning' => 'Weather, Lightning',
+'Weather' => 'Weather'
+);
+$rawg = preg_replace('|\s+|s','',$rawg);
+$rawg = preg_replace('|,|s',', ',$rawg);
+if(isset($txtfeat[$rawg])) {
+  $txtfeatu = $txtfeat[$rawg];
+ } else {
+  $txtfeatu = $rawg;
+ }
+return $txtfeatu;
+}
+// Condition names (based on standard WD icon names)
+function RMNET_lang_WXconds($rawh) {
+$txticon =  array( 
+'Sunny' =>  'Sunny',
+'Clear' =>  'Clear',
+'Cloudy' =>  'Cloudy',
+'Cloudy2' =>  'Cloudy2',
+'Partly Cloudy' =>  'Partly Cloudy',
+'Dry' =>  'Dry',
+'Fog' =>  'Fog',
+'Haze' =>  'Haze',
+'Heavy Rain' =>  'Heavy Rain',
+'Mainly Fine' =>  'Mainly Fine',
+'Mist' => 'Mist',
+'Fog' => 'Fog',
+'Heavy Rain' => 'Heavy Rain',
+'Overcast' => 'Overcast',
+'Rain' => 'Rain',
+'Showers' => 'Showers',
+'Snow' => 'Snow',
+'Thunder' => 'Thunder',
+'Overcast' => 'Overcast',
+'Partly Cloudy' => 'Partly Cloudy',
+'Rain' => 'Rain',
+'Rain2' => 'Rain2',
+'Showers2' => 'Showers2',
+'Sleet' => 'Sleet',
+'Sleet Showers' => 'Sleet Showers',
+'Snow' => 'Snow',
+'Snow Melt' => 'Snow Melt',
+'Snow Showers2' => 'Snow Showers2',
+'Sunny' => 'Sunny',
+'Thunder Showers' => 'Thunder Showers',
+'Thunder Showers2' => 'Thunder Showers2',
+'Thunder Storms' => 'Thunder Storms',
+'Tornado' => 'Tornado',
+'Windy' => 'Windy',
+'Stopped Raining' => 'Stopped Raining',
+'Wind/Rain' => 'Wind/Rain'
+);
+if(isset($txticon[$rawh]) ) {
+  $txticons = $txticon[$rawh];
+ } else {
+  $txticons = $rawh;
+}
+return $txticons;
+}
+// lookup for Region names (optional)
+function RMNET_lang_region($rawr) {
+$txtregions = array(
+// put 'english region name' => 'translated region name',   here
+
+);
+if(isset($txtregions[$rawr])) {
+  $tregion = $txtregions[$rawr];
+ } else { 
+  $tregion = $rawr;
+}
+return $tregion;
+}
+// lookup for Timezone names (optional)
+function RMNET_lang_fixTZname ($timestring) {
+	$tstr = $timestring;
+	$tSF = strftime("%Z",time()); // might be long-form name
+	$tRE = date('T',time()); // normal 3 or 4 character abbreviation
+	
+	if($tSF !== $tRE) { // fix long form to short form if needed
+		$tstr = str_replace($tSF,$tRE,$tstr);
+	}
+	
+	$timeZoneAbbrev = array(
+	 // Put entries here like 'EST' => 'whatever', ...
+	 'EET' => 'EET',
+	 'EEST' => 'EEST',
+	 );
+	
+	if (isset($timeZoneAbbrev[$tRE]) ) {
+		$temp = str_replace($tRE,$timeZoneAbbrev[$tRE],$tstr);
+		if($temp <> '') { $tstr = $temp; }
+	}
+	return $tstr;
+
+}
+// ---------------------end of mesonet-map-lang-en.txt-------------------------------
+?>

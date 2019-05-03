@@ -1,0 +1,291 @@
+<?php
+############################################################################
+#
+# This is the Norwegian language plugin file for the [network]-mesomap.php (Multilingual version)
+# It needs to be in the same directory as the [network]-mesomap.php program itself.
+# This definition file is equivalent to the Nordic-mesomap definition files except the names have been prefixed
+# with 'RMNET_' on all definitions, and some definitions are not used in the non-Nordic versions.
+# Ken True
+# Version 1.00 - 24-Feb-2009 initial release
+# Version 1.01 - 22-Jul-2009 added character set support
+# Version 1.02 - 01-Oct-2012 added support for $printList to suppress List display 
+# Version 3.00 - 24-Jul-2016 repurposed for mesonet-map.php with editing
+# Version 3.03 - 31-Jul-2016 - added CBI display support 
+# Version 4.03 - 29-May-2018 - removed preg_replace e modifier for timezone processing
+
+define('RMNET_CHARSET','ISO-8859-1');
+define('RMNET_LANGVERSION', 'mesonet-map-lang-no.txt - Version 4.03 - 29-May-2018');
+define('RMNET_CBI', 'Fire<br/>Danger');
+define('RMNET_CBILEGEND','Fire Danger [Chandler Burning Index]');
+define('RMNET_CBI_EXTREME','Extreme');
+define('RMNET_CBI_VERYHIGH','Very High');
+define('RMNET_CBI_HIGH','High');
+define('RMNET_CBI_MODERATE','Moderate');
+define('RMNET_CBI_LOW','Low');
+
+define('RMNET_OFFLINE', 'Ingen Gjeldende værforhold');
+
+// BALLOONS
+define('RMNET_TRACKER', 'Stormtracker');
+define('RMNET_NORAIN', 'Ingen nedbør i dag');
+define('RMNET_RAIN', 'Nedbør');
+define('RMNET_SNOWD', 'Snødybde');
+define('RMNET_WIND', 'Vind');
+define('RMNET_WINDFROM', 'Vind fra');
+define('RMNET_HUMI', 'Fuktighet');
+define('RMNET_BARO', 'Lufttrykk');
+define('RMNET_NOFRAME', 'Din nettleser har ikke støtte for "inline frames" eller er ikke konfigurert til å støtte "inline frames".');
+define('RMNET_CURRHEAD', 'Nåværende værforhold hos Nordic Weather Network');
+define('RMNET_POLARN', 'Mørketid');
+define('RMNET_MIDNIGHTS', 'Midnattsol');
+
+// TABLEHEADER
+define('RMNET_FEAT', 'Stasjon<br/>Egenskaper/Høyde o.h.');
+define('RMNET_CONDL', 'Gjeldende værforhold');
+define('RMNET_CURHEAD', 'Vær<br />nå');
+define('RMNET_TEMP', 'Temp');
+define('RMNET_HUM', 'Fukt');
+define('RMNET_AVG', 'Gjsn vind');
+define('RMNET_PRECIPS', 'Nedbør');
+define('RMNET_BAROB', 'Lufttr.');
+define('RMNET_SNOB', 'Snø');
+
+// TOPLISTS
+define('RMNET_TOPHEAD', 'Topp 10 observasjoner fra Nordic Weather Network');
+define('RMNET_MAXTEMP', 'Høyeste temperatur');
+define('RMNET_MINTEMP', 'Laveste temperatur');
+define('RMNET_MAXAVGW', 'Høyeste gjsn. vind');
+define('RMNET_PRECIP', 'Nedbør ');
+define('RMNET_MAXHUMI', 'Høyeste følt temp');
+define('RMNET_MINCHILL', 'Laveste vindkjøling');
+define('RMNET_MAXGUSTW', 'Høyeste vindkast');
+define('RMNET_CURRAVG', 'Nåværende gjennomsnitt');
+define('RMNET_FROMST', '* Fra 1.6.2008 ** Ikke alle stasjonene rapporterer snødybde');
+define('RMNET_DAILYPREC', 'Daglig nedbør');
+define('RMNET_TOTPREC', 'Total nedbør');
+define('RMNET_TXTGUST', 'Vindkast');
+
+// TABLEHEADER
+define('RMNET_COLSORT', 'Merk: Klikk på bordet kolonne for å endre rekkefølgen på at kolonne verdier.');
+define('RMNET_STATE', 'Område');
+define('RMNET_STATION','Station');
+define('RMNET_TEMPL', 'Temperature');
+define('RMNET_DEWPT', 'Duggpunkt');
+define('RMNET_DEWPTABBREV','DP');
+define('RMNET_HUML', 'Humidity');
+define('RMNET_AVGWIND', 'Vind');
+define('RMNET_GUSTWIND', 'Vindkast');
+define('RMNET_GUSTABBREV', 'G');
+define('RMNET_WINDL', 'Wind Direction and Speed/Gust');
+define('RMNET_PRECIPSL', 'Rain Today');
+define('RMNET_BAROT', 'Trend');
+define('RMNET_BAROL', 'Pressure and Trend');
+define('RMNET_DATAUPDT', 'Siste<br/>oppdatering');
+define('RMNET_NOCOND', 'Ingen nåværende forhold rapport');
+define('RMNET_TOWN',"Name of the town");
+// for javascript animation control button lables
+define('RMNET_RUN', 'løpe');
+define('RMNET_PAUSE', 'Pause');
+define('RMNET_STEP', 'steppe');
+// Standalone (items are used when [network]-mesomap.php is invoked as a script (instead of being included in a page)
+define('RMNET_CONDSFROM', 'Forhold data ble samlet inn fra<br/>');
+// date-time appears
+define('RMNET_CONDSTO', 'til');
+
+
+function defcountries($rawc) {
+
+  $txtcountries =  array(  
+  'Sweden' => 'Sverige',
+  'Finland' => 'Finland',
+  'Norway' => 'Norge',
+  'Iceland' => 'Island',
+  'Greenland' => 'Grønland (DEN)',
+  'Svalbard' => 'Svalbard (NOR)',
+  'Denmark' => 'Danmark');
+  
+  if(isset($txtcountries[$rawc])) {
+	$txtcountry = $txtcountries[$rawc];
+  }else {
+	$txtcountry = $rawc;
+  }
+  return $txtcountry;
+}
+
+function RMNET_lang_winddir($rawd) {
+
+  $txtdir =  array(  
+  'N' => 'N',
+  'NNE' => 'NNØ',
+  'NE' => 'NØ',
+  'ENE' => 'ØNØ',
+  'E' => 'Ø',
+  'ESE' => 'ØSØ',
+  'SE' => 'SØ',
+  'SSE' => 'SSØ',
+  'S' => 'S',
+  'SSW' => 'SSV',
+  'SW' => 'SV',
+  'WSW' => 'VSV',
+  'W' => 'V',
+  'WNW' => 'VNV',
+  'NW' => 'NV',
+  'NNW' => 'NNV',
+  );
+  
+  if(isset($txtdir[$rawd])) {
+	$txtdire = $txtdir[$rawd];
+   } else {
+	$txtdire = $rawd;
+  }
+  return $txtdire;
+}
+
+function RMNET_lang_barotrend($rawe) {
+
+  $txtbarot =  array(  
+  'Rising' => 'Stiger',
+  'Falling' => 'Synker',
+  'Rising Rapidly' => 'Stiger fort',
+  'Falling Rapidly' => 'Synker fort',
+  'Rising Slowly' => 'Stiger sakte',
+  'Falling Slowly' => 'Synker sakte',
+  'Steady' => 'Stabilt',
+  '--' => '',
+  'n/a' => 'n/a'
+  );
+  
+  if(isset($txtbarot[$rawe])) {
+	$txtbart = $txtbarot[$rawe];
+   } else {
+	$txtbart = $rawe;
+   }
+  return $txtbart;
+}
+
+function defmonths($rawf) {
+
+  $txtmon =  array(  
+  'January' => 'Januar',
+  'February' => 'Februar',
+  'March' => 'Mars',
+  'April' => 'April',
+  'May' => 'Mai',
+  'June' => 'Juni',
+  'July' => 'Juli',
+  'August' => 'August',
+  'September' => 'September',
+  'October' => 'Oktober',
+  'November' => 'November',
+  'December' => 'Desember'
+  );
+  
+  $txtmonth = $txtmon[$rawf];
+  return $txtmonth;
+}
+
+function RMNET_lang_stationfeatures($rawg) {
+
+  $txtfeat =  array(  
+  'Weather, Lightning, WebCam' => 'Værstasjon, Lyndetektor, Webkamera',
+  'Weather, WebCam' => 'Værstasjon, Webkamera',
+  'Weather, Lightning' => 'Værstasjon, Lyndetektor',
+  'Weather' => 'Værstasjon'
+  );
+  
+  $rawg = preg_replace('|\s+|s','',$rawg);
+  $rawg = preg_replace('|,|s',', ',$rawg);
+  if(isset($txtfeat[$rawg])) {
+	$txtfeatu = $txtfeat[$rawg];
+   } else {
+	$txtfeatu = $rawg;
+   }
+  return $txtfeatu;
+}
+
+function RMNET_lang_WXconds($rawh) {
+
+  $txticon =  array( 
+  
+  'Sunny' =>  'Sol',
+  'Clear' =>  'Klart',
+  'Cloudy' =>  'Overskyet',
+  'Cloudy2' =>  'Overskyet',
+  'Partly Cloudy' =>  'Delvis skyet',
+  'Dry' =>  'Tørt',
+  'Fog' =>  'Tåke',
+  'Haze' =>  'Disig',
+  'Heavy Rain' =>  'Kraftig regn',
+  'Mainly Fine' =>  'Hovedsaklig sol',
+  'Mist' => 'Disigt',
+  'Overcast' => 'Varierende',
+  'Rain' => 'Nedbør',
+  'Showers' => 'Regnbyger',
+  'Snow' => 'Snø',
+  'Thunder' => 'Torden',
+  'Rain2' => 'Regn',
+  'Showers2' => 'Regnbyger',
+  'Sleet' => 'Sludd',
+  'Sleet Showers' => 'Sluddbyger',
+  'Snow Melt' => 'Snøsmelting',
+  'Snow Showers2' => 'Snøbyger',
+  'Sunny' => 'Sol',
+  'Thunder Showers' => 'Tordenbyger',
+  'Thunder Showers2' => 'Tordenbyger',
+  'Thunder Storms' => 'Tordenvær',
+  'Tornado' => 'Tornado',
+  'Windy' => 'Vind',
+  'Stopped Raining' => 'Stoppet å regne',
+  'Wind/Rain' => 'Vind/Regn'
+  
+  );
+  
+  if(isset($txticon[$rawh]) ) {
+	$txticons = $txticon[$rawh];
+   } else {
+	$txticons = $rawh;
+  }
+  return $txticons;
+}
+
+// lookup for Region names (optional)
+function RMNET_lang_region($rawr) {
+  $txtregions = array(
+  // put 'english region name' => 'translated region name',   here
+  
+  );
+  if(isset($txtregions[$rawr])) {
+	$tregion = $txtregions[$rawr];
+   } else { 
+	$tregion = $rawr;
+  }
+  return $tregion;
+}
+
+// lookup for Timezone names (optional)
+function RMNET_lang_fixTZname ($timestring) {
+	$tstr = $timestring;
+	$tSF = strftime("%Z",time()); // might be long-form name
+	$tRE = date('T',time()); // normal 3 or 4 character abbreviation
+	
+	if($tSF !== $tRE) { // fix long form to short form if needed
+		$tstr = str_replace($tSF,$tRE,$tstr);
+	}
+	
+	$timeZoneAbbrev = array(
+	 // Put entries here like 'EST' => 'whatever', ...
+	 'EET' => 'EET',
+	 'EEST' => 'EEST',
+	 );
+	
+	if (isset($timeZoneAbbrev[$tRE]) ) {
+		$temp = str_replace($tRE,$timeZoneAbbrev[$tRE],$tstr);
+		if($temp <> '') { $tstr = $temp; }
+	}
+	return $tstr;
+
+}
+
+// ---------------------end of mesonet-map-lang-no.txt-------------------------------
+
+?>

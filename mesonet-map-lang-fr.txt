@@ -1,0 +1,247 @@
+<?php
+############################################################################
+#
+# This is the French language plugin file for the [network]-mesomap.php (Multilingual version)
+# It needs to be in the same directory as the [network]-mesomap.php program itself.
+# This definition file is equivalent to the Nordic-mesomap definition files except the names have been prefixed
+# with 'RMNET_' on all definitions, and some definitions are not used in the non-Nordic versions.
+# Ken True
+
+# Version 1.00 - 24-Feb-2009 initial release
+# Version 1.01 - 22-Jul-2009 added character set support 
+# Version 3.00 - 24-Jul-2016 repurposed for mesonet-map.php with editing
+# Version 3.03 - 31-Jul-2016 - added CBI display support 
+# Version 4.03 - 29-May-2018 - removed preg_replace e modifier for timezone processing
+
+define('RMNET_CHARSET','ISO-8859-1');
+
+define('RMNET_LANGVERSION', 'mesonet-map-lang-fr.txt - Version 4.03 - 29-May-2018');
+// Main
+
+define('RMNET_COLSORT', 'Note: Cliquez sur le titre de la colonne afin de modifier l\'ordre des valeurs de la colonne.');
+
+// Tables and title= tags
+define('RMNET_CURRHEAD', 'Conditions météo actuelles obtenues des stations membres du Réseau Météo Benelux');
+
+// TABLEHEADER
+define('RMNET_FEAT', 'Station<br/>Caractéristiques/Altitude');
+define('RMNET_STATE', 'Nation');
+define('RMNET_STATION','Station');
+define('RMNET_CURHEAD', 'Cond.');
+define('RMNET_CONDL','Conditions actuelles');
+define('RMNET_TEMP', 'Temp.');
+define('RMNET_TEMPL', 'Température');
+define('RMNET_DEWPT', 'Point de rosée');
+define('RMNET_DEWPTABBREV','PR');
+define('RMNET_HUM', 'Humid.');
+define('RMNET_HUML', 'Humidité');
+define('RMNET_AVGWIND', 'Vents');
+define('RMNET_GUSTWIND', 'Rafales');
+define('RMNET_GUSTABBREV', 'R');
+define('RMNET_WINDL', 'Direction et vitesse du vent/rafale');
+define('RMNET_WIND', 'Vent');
+define('RMNET_WINDFROM', 'Vents du');
+define('RMNET_PRECIPS', 'Pluie');
+define('RMNET_PRECIPSL', 'Pluie de la journée');
+define('RMNET_BAROB', 'Pression');
+define('RMNET_BAROT', 'Tendan.');
+define('RMNET_BAROL', 'Pression et tendance');
+define('RMNET_SNOB', 'Neige');
+define('RMNET_TXTGUST', 'Rafale');
+define('RMNET_DATAUPDT', 'Dernière mise à jour');
+define('RMNET_NOCOND', 'Aucun bulletin des conditions actuelles');
+define('RMNET_TOWN',"Nom de la municipalité");
+define('RMNET_CBI', 'Fire<br/>Danger');
+define('RMNET_CBILEGEND','Fire Danger [Chandler Burning Index]');
+define('RMNET_CBI_EXTREME','Extreme');
+define('RMNET_CBI_VERYHIGH','Very High');
+define('RMNET_CBI_HIGH','High');
+define('RMNET_CBI_MODERATE','Moderate');
+define('RMNET_CBI_LOW','Low');
+
+define('RMNET_OFFLINE',"Offline"); // text to display on mesomap when station data is stale/not available
+
+// for javascript animation control button lables
+define('RMNET_RUN', 'Animer');
+define('RMNET_PAUSE', 'Pause');
+define('RMNET_STEP', 'Étapes');
+
+define('RMNET_CONDSFROM', 'Les données des conditions météo furent recueillies au cours de périodes<br/>de');
+// date-time appears
+define('RMNET_CONDSTO', 'à');
+
+// the following functions are used to translate various things ..
+// replace the '...' after the => in each of the arrays below for local language
+// do not change the '..' before the => .. it is the key used for the lookups
+
+// Wind direction abbreviations
+
+function RMNET_lang_winddir($rawd) {
+
+$txtdir =  array(
+'N' => 'N',
+'NNE' => 'NNE',
+'NE' => 'NE',
+'ENE' => 'ENE',
+'E' => 'E',
+'ESE' => 'ESE',
+'SE' => 'SE',
+'SSE' => 'SSE',
+'S' => 'S',
+'SSW' => 'SSO',
+'SW' => 'SO',
+'WSW' => 'OSO',
+'W' => 'O',
+'WNW' => 'ONO',
+'NW' => 'NO',
+'NNW' => 'NNO',
+);
+
+if(isset($txtdir[$rawd])) {
+  $txtdire = $txtdir[$rawd];
+ } else {
+  $txtdire = $rawd;
+}
+return $txtdire;
+}
+
+// Barometer trend abbreviations
+
+function RMNET_lang_barotrend($rawe) {
+
+$txtbarot =  array(
+'Rising' => 'Hausse',
+'Falling Slowly' => 'Baisse lentement',
+'Rising Slowly' => 'Hausse lentement',
+'Falling' => 'Baisse',
+'Rising Rapidly' => 'Hausse rapide',
+'Falling Rapidly' => 'Baisse rapide',
+'Steady' => 'Fixe'
+);
+
+if(isset($txtbarot[$rawe])) {
+  $txtbart = $txtbarot[$rawe];
+ } else {
+  $txtbart = $rawe;
+ }
+return $txtbart;
+}
+
+
+function RMNET_lang_stationfeatures($rawg) {
+
+$txtfeat =  array(
+'Weather, Lightning, WebCam' => 'Météo, CaméraWeb, Foudre',
+'Weather, WebCam, Lightning' => 'Météo, CaméraWeb, Foudre',
+'Weather, WebCam' => 'Météo, CaméraWeb',
+'Weather, Lightning' => 'Météo, Foudre',
+'Weather' => 'Météo'
+);
+$temp = preg_replace('|\,\s*|s',', ',trim($rawg));
+//echo "\n<!-- fr RMNET_lang_stationfeatures('$rawg') temp='$temp' -->\n";
+if(strlen($temp) > 0 and isset($txtfeat[$temp])) {
+  $txtfeatu = $txtfeat[$temp];
+ } else {
+  $txtfeatu = $rawg;
+ }
+
+ return $txtfeatu;
+}
+
+// Condition names (based on standard WD icon names)
+
+function RMNET_lang_WXconds($rawh) {
+
+$txticon =  array(
+
+'Sunny' =>  'Ensoleillé',
+'Clear' =>  'Dégagé',
+'Cloudy' =>  'Nuageux',
+'Cloudy2' =>  'Nuageux2',
+'Partly Cloudy' =>  'Partiellement nuageux',
+'Dry' =>  'Sec',
+'Fog' =>  'Brume',
+'Haze' =>  'Brouillard',
+'Heavy Rain' =>  'Pluie abondante',
+'Mainly Fine' =>  'Plutôt dégagé',
+'Mist' => 'Brume matinale',
+'Heavy Rain' => 'Pluie abondante',
+'Overcast' => 'Couvert',
+'Rain' => 'Pluie',
+'Showers' => 'Averses',
+'Snow' => 'Neige',
+'Thunder' => 'Foudre',
+'Overcast' => 'Couvert',
+'Partly Cloudy' => 'Partiellement nuageux',
+'Rain' => 'Pluie',
+'Rain2' => 'Pluie2',
+'Showers2' => 'Averses2',
+'Sleet' => 'Pluie verglaçante',
+'Sleet Showers' => 'Averses de de pluie verglaçante',
+'Snow' => 'Neige',
+'Snow Melt' => 'Neige fondue',
+'Snow Showers2' => 'Averses de neige2',
+'Sunny' => 'Ensoleillé',
+'Thunder Showers' => 'Orages violents',
+'Thunder Showers2' => 'Orages violents2',
+'Thunder Storms' => 'Orages',
+'Tornado' => 'Tornade',
+'Windy' => 'Venteux',
+'Stopped Raining' => 'Cessé de pleuvoir',
+'Wind/Rain' => 'Vent/Pluie'
+
+);
+if(isset($txticon[$rawh]) ) {
+  $txticons = $txticon[$rawh];
+ } else {
+  $txticons = $rawh;
+}
+return $txticons;
+}
+
+// lookup for Region names (optional)
+
+function RMNET_lang_region($rawr) {
+$txtregions = array(
+// put 'english region name' => 'translated region name',   here
+'Netherlands' => 'Pays-Bas',
+'Belgium' => 'Belgique',
+'Luxembourg' => 'Luxembourg',
+
+);
+
+if(isset($txtregions[$rawr])) {
+  $tregion = $txtregions[$rawr];
+ } else {
+  $tregion = $rawr;
+}
+return $tregion;
+
+}
+
+// lookup for Timezone names (optional)
+function RMNET_lang_fixTZname ($timestring) {
+	$tstr = $timestring;
+	$tSF = strftime("%Z",time()); // might be long-form name
+	$tRE = date('T',time()); // normal 3 or 4 character abbreviation
+	
+	if($tSF !== $tRE) { // fix long form to short form if needed
+		$tstr = str_replace($tSF,$tRE,$tstr);
+	}
+	
+	$timeZoneAbbrev = array(
+	 // Put entries here like 'EST' => 'whatever', ...
+	 'EET' => 'EET',
+	 'EEST' => 'EEST',
+	 );
+	
+	if (isset($timeZoneAbbrev[$tRE]) ) {
+		$temp = str_replace($tRE,$timeZoneAbbrev[$tRE],$tstr);
+		if($temp <> '') { $tstr = $temp; }
+	}
+	return $tstr;
+
+}
+
+// ---------------------end of mesonet-map-lang-fr.txt-------------------------------
+?>

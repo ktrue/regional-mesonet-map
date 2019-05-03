@@ -1,0 +1,250 @@
+<?php
+############################################################################
+#
+# This is the Bulgarian language plugin file for the [network]-mesomap.php (Multilingual version)
+# It needs to be in the same directory as the [network]-mesomap.php program itself.
+# This definition file is equivalent to the Nordic-mesomap definition files except the names have been prefixed
+# with 'RMNET_' on all definitions, and some definitions are not used in the non-Nordic versions.
+# Ken True
+
+# Version 1.00 - 24-Feb-2009 initial release
+# Version 1.01 - 22-Jul-2009 added character set support 
+# Version 3.00 - 24-Jul-2016 repurposed for mesonet-map.php with editing
+# Version 3.03 - 31-Jul-2016 - added CBI display support 
+# Version 4.03 - 29-May-2018 - removed preg_replace e modifier for timezone processing
+
+
+define('RMNET_CHARSET','ISO-8859-5');
+define('RMNET_LANGVERSION', 'mesonet-map-lang-bg.txt - Version 4.03 - 29-May-2018');
+// Main
+
+define('RMNET_COLSORT', 'Забележка: Натиснете върху колоната за сортиране по дадена стойност.');
+
+// Tables and title= tags
+define('RMNET_CURRHEAD', 'Времето в момента предоставено от станциите, членове на Българска Метео Мрежа');
+
+// TABLEHEADER
+define('RMNET_FEAT', 'Станция<br/>Особености/Надм. вис.');
+define('RMNET_STATE', 'Община');
+define('RMNET_STATION','Станция');
+define('RMNET_CURHEAD', 'Метео<br />Условия');
+define('RMNET_CONDL','Метеорологични условия');
+define('RMNET_TEMP', 'Темп.');
+define('RMNET_TEMPL', 'Температура');
+define('RMNET_DEWPT', 'Т. О.');
+define('RMNET_DEWPTABBREV','');
+define('RMNET_HUM', 'Влажност');
+define('RMNET_HUML', 'Влажност');
+define('RMNET_AVGWIND', 'Вятър');
+define('RMNET_GUSTWIND', 'Пориви');
+define('RMNET_GUSTABBREV', 'Пориви.');
+define('RMNET_WINDL', 'Посока на Вятъра, Скорост/ Пориви');
+define('RMNET_WIND', 'Вятър');
+define('RMNET_WINDFROM', 'Вятър от');
+define('RMNET_PRECIPS', 'Валежи');
+define('RMNET_PRECIPSL', 'Валежи Днес');
+define('RMNET_BAROB', 'Атм. нал.');
+define('RMNET_BAROT', 'Тенд.');
+define('RMNET_BAROL', 'Налягане и Тенденции');
+define('RMNET_SNOB', 'Сняг');
+define('RMNET_TXTGUST', 'Пориви');
+define('RMNET_DATAUPDT', 'Посл.<br />Актуал.');
+define('RMNET_NOCOND', 'Няма данни за метеорологични условия');
+define('RMNET_TOWN',"Локация");
+define('RMNET_CBI', 'Fire<br/>Danger');
+define('RMNET_CBILEGEND','Fire Danger [Chandler Burning Index]');
+define('RMNET_CBI_EXTREME','Extreme');
+define('RMNET_CBI_VERYHIGH','Very High');
+define('RMNET_CBI_HIGH','High');
+define('RMNET_CBI_MODERATE','Moderate');
+define('RMNET_CBI_LOW','Low');
+
+define('RMNET_OFFLINE',"Липсват данни"); // text to display on mesomap when station data is stale/not available
+
+// for javascript animation control button lables
+define('RMNET_RUN', 'Старт');
+define('RMNET_PAUSE', 'Пауза');
+define('RMNET_STEP', 'Стъпка');
+
+
+// Standalone (items are used when [network]-mesomap.php is invoked as a script (instead of being included in a page)
+
+define('RMNET_CONDSFROM', 'Данните са актуализирани:<br/>');
+// date-time appears
+define('RMNET_CONDSTO', 'за');
+
+// the following functions are used to translate various things ..
+// replace the '...' after the => in each of the arrays below for local language
+// do not change the '..' before the => .. it is the key used for the lookups
+
+// Wind direction abbreviations
+
+function RMNET_lang_winddir($rawd) {
+
+$txtdir =  array(
+'N' => 'С',
+'NNE' => 'ССИ',
+'NE' => 'СИ',
+'ENE' => 'ИСИ',
+'E' => 'И',
+'ESE' => 'ИЮИ',
+'SE' => 'ЮИ',
+'SSE' => 'ЮЮИ',
+'S' => 'Ю',
+'SSW' => 'ЮЮЗ',
+'SW' => 'ЮЗ',
+'WSW' => 'ЗЮЗ',
+'W' => 'З',
+'WNW' => 'ЗСЗ',
+'NW' => 'СЗ',
+'NNW' => 'ССЗ',
+);
+
+if(isset($txtdir[$rawd])) {
+  $txtdire = $txtdir[$rawd];
+ } else {
+  $txtdire = $rawd;
+}
+return $txtdire;
+}
+
+// Barometer trend abbreviations
+
+function RMNET_lang_barotrend($rawe) {
+
+$txtbarot =  array(  
+'Rising' => 'Покачване',
+'Falling' => 'Понижаване',
+'Rising Rapidly' => 'Бързо покачване',
+'Falling Rapidly' => 'Бързо понижаване',
+'Rising Slowly' => 'Бавно покачване',
+'Falling Slowly' => 'Бавно понижаване',
+'Steady' => 'Стабилно'
+);
+
+if(isset($txtbarot[$rawe])) {
+  $txtbart = $txtbarot[$rawe];
+ } else {
+  $txtbart = $rawe;
+ }
+return $txtbart;
+}
+
+
+function RMNET_lang_stationfeatures($rawg) {
+
+$txtfeat =  array(  
+'Weather, Lightning, WebCam' => 'Метеостанция, Камера, Детектор мълнии',
+'Weather, WebCam, Lightning' => 'Метеостанция, Камера, Детектор мълнии',
+'Weather, WebCam' => 'Метеостанция, Камера',
+'Weather, Lightning' => 'Метеостанция, детектор мълнии',
+'Weather' => 'Метеостанция'
+);
+
+$rawg = preg_replace('|\s+|s','',$rawg);
+$rawg = preg_replace('|,|s',', ',$rawg);
+if(isset($txtfeat[$rawg])) {
+  $txtfeatu = $txtfeat[$rawg];
+ } else {
+  $txtfeatu = $rawg;
+ }
+return $txtfeatu;
+}
+
+// Condition names (based on standard WD icon names)
+
+function RMNET_lang_WXconds($rawh) {
+
+$txticon =  array( 
+
+'Sunny' =>  'Слънчево',
+'Clear' =>  'Ясно',
+'Cloudy' =>  'Облачно',
+'Cloudy2' =>  'Облачно2',
+'Partly Cloudy' =>  'Частична облачност',
+'Dry' =>  'Сухо',
+'Fog' =>  'Мъгла',
+'Haze' =>  'Мараня',
+'Heavy Rain' =>  'Силни превалявания',
+'Mainly Fine' =>  'Предимно ясно',
+'Mist' => 'Лека мъгла',
+'Fog' => 'Мъгла',
+'Heavy Rain' => 'Силни превалявания',
+'Overcast' => 'Заоблачно',
+'Rain' => 'Дъжд',
+'Showers' => 'Превалявания',
+'Snow' => 'Сняг',
+'Thunder' => 'Гръмотевици',
+'Overcast' => 'Заоблачено',
+'Partly Cloudy' => 'Частична облачност',
+'Rain' => 'Дъжд',
+'Rain2' => 'Дъжд2',
+'Showers2' => 'Певалявания2',
+'Sleet' => 'Суграшица',
+'Sleet Showers' => 'Дъжд и лапавица',
+'Snow' => 'Сняг',
+'Snow Melt' => 'Снеготопене',
+'Snow Showers2' => 'Лек сняг2',
+'Sunny' => 'Слънчево',
+'Thunder Showers' => 'Певалявания с гръмотевици',
+'Thunder Showers2' => 'Певалявания с гръмотевици2',
+'Thunder Storms' => 'Гръмотевични бури',
+'Tornado' => 'Торнадо',
+'Windy' => 'Ветровито',
+'Stopped Raining' => 'Преустановен валеж',
+'Wind/Rain' => 'Вятър и дъжд'
+
+);
+if(isset($txticon[$rawh]) ) {
+  $txticons = $txticon[$rawh];
+ } else {
+  $txticons = $rawh;
+}
+return $txticons;
+}
+
+// lookup for Region names (optional)
+
+function RMNET_lang_region($rawr) {
+$txtregions = array(
+// put 'english region name' => 'translated region name',   here
+'Bulgaria' => 'България',
+
+);
+
+if(isset($txtregions[$rawr])) {
+  $tregion = $txtregions[$rawr];
+ } else { 
+  $tregion = $rawr;
+}
+return $tregion;
+
+}
+
+// lookup for Timezone names (optional)
+function RMNET_lang_fixTZname ($timestring) {
+	$tstr = $timestring;
+	$tSF = strftime("%Z",time()); // might be long-form name
+	$tRE = date('T',time()); // normal 3 or 4 character abbreviation
+	
+	if($tSF !== $tRE) { // fix long form to short form if needed
+		$tstr = str_replace($tSF,$tRE,$tstr);
+	}
+	
+	$timeZoneAbbrev = array(
+	 // Put entries here like 'EST' => 'whatever', ...
+	 'EET' => 'EET',
+	 'EEST' => 'EEST',
+	 );
+	
+	if (isset($timeZoneAbbrev[$tRE]) ) {
+		$temp = str_replace($tRE,$timeZoneAbbrev[$tRE],$tstr);
+		if($temp <> '') { $tstr = $temp; }
+	}
+	return $tstr;
+
+}
+
+
+// ---------------------end of mesonet-map-lang-bg.txt-------------------------------
+?>
