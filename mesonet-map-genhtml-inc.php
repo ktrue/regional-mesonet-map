@@ -18,13 +18,16 @@
 //  Version 4.00 - 23-May-2018 - rewrite to use Leaflet/OpenStreetMaps+others for map display
 //  Version 4.03 - 29-May-2018 - fixes for timezone display processing
 //  Version 4.04 - 11-Jun-2018 - fixes for deprecated each() function
+//  Version 4.07 - 21-Jan-2022 - added call to new_strftime() function for PHP 8.1
+//  Version 4.08 - 31-Aug-2022 - fix for display of conditions updated time
+//  Version 4.09 - 27-Dec-2022 - fixes for PHP 8.2
 //
 //  Note: distribution of this program is limited to members of the
 //  Affiliated Regional Weather Networks (http://www.northamericanweather.net/ )
 //  Distribution outside of the membership is prohibited.
 //  Copyright 2006-2014, Ken True - Saratoga-weather.org
 //
-$Version = "V4.04 - 11-Jun-2018";
+$Version = "V4.09 - 27-Dec-2022";
 
 
 /// ------  begin code ----------
@@ -196,7 +199,7 @@ global $rmShowFireDanger, $cacheDir;
 $Stations = array();  // storage area for the station info
 $StationData = array(); // storage area for current conditions
 $timeStamp = time();
-$currentTime = RMNET_lang_fixTZname(strftime($MesoTimeFormat,$timeStamp));
+$currentTime = RMNET_lang_fixTZname(new_strftime($MesoTimeFormat,$timeStamp));
 
 RMNET_load_stations($RMNETlinksFile);  // load up the $Stations from the config file
 	
@@ -271,12 +274,12 @@ foreach ($StationData as $key => $vals) {
   }
 }
 
-$Debug .= "<!-- oldest data=$oldestData (".gmdate(DATE_COOKIE,$oldestData).") Lcl=(".date(DATE_COOKIE,$oldestData).") RMNET=(".RMNET_lang_fixTZname(strftime($MesoTimeFormat,$oldestData)).") -->\n";
-$Debug .= "<!-- newest data=$newestData (".gmdate(DATE_COOKIE,$newestData).") Lcl=(".date(DATE_COOKIE,$newestData).") RMNET=(".RMNET_lang_fixTZname(strftime($MesoTimeFormat,$newestData)).") -->\n";
+$Debug .= "<!-- oldest data=$oldestData (".gmdate(DATE_COOKIE,$oldestData).") Lcl=(".date(DATE_COOKIE,$oldestData).") RMNET=(".RMNET_lang_fixTZname(new_strftime($MesoTimeFormat,$oldestData)).") -->\n";
+$Debug .= "<!-- newest data=$newestData (".gmdate(DATE_COOKIE,$newestData).") Lcl=(".date(DATE_COOKIE,$newestData).") RMNET=(".RMNET_lang_fixTZname(new_strftime($MesoTimeFormat,$newestData)).") -->\n";
 
 
 $RMNET_CondsDates = 
- "<p>" . RMNET_CONDSFROM. " " . RMNET_lang_fixTZname(strftime($MesoTimeFormat,$oldestData)) . " ". RMNET_CONDSTO . " " . RMNET_lang_fixTZname(strftime($MesoTimeFormat,$newestData)) . " </p>\n"; 
+ "<p>" . RMNET_CONDSFROM. " " . RMNET_lang_fixTZname(new_strftime($MesoTimeFormat,$oldestData)) . " ". RMNET_CONDSTO . " " . RMNET_lang_fixTZname(new_strftime($MesoTimeFormat,$newestData)) . " </p>\n"; 
 
 return;
 
@@ -409,7 +412,7 @@ function RMNET_prt_tabledata($key) {
     $wda = $WDIR;
 	$RMNET_table .= RMNET_lang_winddir($wda);
 	if ($windArrowDir) {
-       $RMNET_table .= "&nbsp;<img src=\"$windArrowDir${wda}.gif\" height=\"14\" width=\"14\" 
+       $RMNET_table .= "&nbsp;<img src=\"$windArrowDir{$wda}.gif\" height=\"14\" width=\"14\" 
 	    alt=\"".RMNET_WINDFROM." ".RMNET_lang_winddir($wda) ."\" title=\"".RMNET_WINDFROM." ".RMNET_lang_winddir($wda) ."\" />";
 	}
     $RMNET_table .=  "&nbsp;" . $WSPD;
@@ -426,7 +429,8 @@ function RMNET_prt_tabledata($key) {
   if($rmShowFireDanger) {
     $RMNET_table .="  <td align=\"center\">".RMNET_getFireDanger($TEMP,$HUMID)."</td>\n";
   }
-  $RMNET_table .="  <td align=\"center\">" . date('H:i:s',$UDATE) . "</td>
+	$tDate = is_numeric($UDATE)?date('H:i:s',$UDATE):$UDATE;
+  $RMNET_table .="  <td align=\"center\">" . $tDate . "</td>
   <!-- $RawDataType load time: $FTIME sec -->
 </tr>\n";
 
@@ -480,18 +484,18 @@ function convertWind  ( $inwind, $inUOM = 'KTS' ) {
    }
    
 	if (($myUOM == 'E' || $useMPH) and (! $useKnots and ! $useMPS)) { // convert knots to mph
-		$WIND = sprintf($dpWind?"%02.${dpWind}f":"%d",round($rawwind * 1.1507794,$dpWind));
+		$WIND = sprintf($dpWind?"%02.{$dpWind}f":"%d",round($rawwind * 1.1507794,$dpWind));
 		$using = 'MPH';
 	}   
 	if ($useKnots) { $WIND = round($rawwind * 1.0,$dpWind) ;
 	  $using='KTS';
 	} //force usage of knots for speed
     if ($myUOM == 'M' and $useMPS and ! $useKnots and ! $useMPH ) { // convert knots to m/s
-		  $WIND = sprintf($dpWind?"%02.${dpWind}f":"%d",round($rawwind * 0.514444444,$dpWind));
+		  $WIND = sprintf($dpWind?"%02.{$dpWind}f":"%d",round($rawwind * 0.514444444,$dpWind));
 		  $using = 'MPS';
 	} 
 	if ($myUOM == 'M' and ! $useMPS and ! $useKnots and ! $useMPH) { // convert knots to km/hr
-		  $WIND = sprintf($dpWind?"%02.${dpWind}f":"%d",round($rawwind * 1.852,$dpWind));
+		  $WIND = sprintf($dpWind?"%02.{$dpWind}f":"%d",round($rawwind * 1.852,$dpWind));
 		  $using = 'KMH';
 	}
 	$Debug .= "<!-- convertWind($inwind$cvt) using $inUOM to $using is '$WIND' -->\n";
@@ -507,9 +511,9 @@ function convertBaro ( $inpress, $baroUOM = 'hPa' ) {
    }
 
 	if ($myUOM == 'E') { // convert hPa to inHg
-	   return (sprintf("%02.${dpBaro}f",round($rawpress  / 33.86388158,$dpBaro)));
+	   return (sprintf("%02.{$dpBaro}f",round($rawpress  / 33.86388158,$dpBaro)));
 	} else {
-	   return (sprintf("%02.${dpBaro}f",round($rawpress * 1.0,$dpBaro))); // leave in hPa
+	   return (sprintf("%02.{$dpBaro}f",round($rawpress * 1.0,$dpBaro))); // leave in hPa
 	}
 }
 
@@ -521,9 +525,9 @@ function convertRain ( $inrain, $rainUOM = 'mm' ) {
      $Debug .= "<!-- convertRain($inrain,$rainUOM) to mm $rawrain (unrounded) -->\n";
    }
 	if ($myUOM == 'E') { // convert mm to inches
-	   return (sprintf("%02.${dpRain}f",round($rawrain * .0393700787,$dpRain)));
+	   return (sprintf("%02.{$dpRain}f",round($rawrain * .0393700787,$dpRain)));
 	} else {
-	   return (sprintf("%02.${dpRain}f",round($rawrain * 1.0,$dpRain))); // leave in mm
+	   return (sprintf("%02.{$dpRain}f",round($rawrain * 1.0,$dpRain))); // leave in mm
 	}
 }
 
